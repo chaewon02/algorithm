@@ -1,41 +1,55 @@
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
-public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int m = sc.nextInt();
-        ArrayList<Integer> arr = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            arr.add(sc.nextInt());
+//28
+public class Main{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        long n = Integer.parseInt(st.nextToken());
+        long m = Integer.parseInt(st.nextToken());
+        StringTokenizer st2 = new StringTokenizer(br.readLine());
+        ArrayList<Integer> tree = new ArrayList<>();
+        for(int i=0;i<n;i++){
+            tree.add(Integer.parseInt(st2.nextToken()));
         }
-        arr.sort(null);
-        long res = BinarySearch(arr, m);
+        tree.sort(null); // 오름차순
+        long res = BinarySearch(tree,m);
+
         System.out.println(res);
+        // 절단기 설정값 : mid / 0~최댓값 mid
+        // 주어진 값 7(m)
     }
-    static long BinarySearch(ArrayList<Integer> arr, int target) {
-        long low = 0;
-        long high = 1000000001;
-        long mid = 0;
-        long res = 0;
-        while (low <= high) {
-            mid = (low+high) / 2;
-            long height = 0;
-            for(int i : arr){
-                if(i>=mid){
-                    height += i - mid ; // 잘라낸 나무 길이 5 0 () 2 = 7
+    static long BinarySearch(ArrayList<Integer> tree,long target){
+        long start = 0;
+        long end = tree.get(tree.size()-1); // 최댓값
+        long max = 0;
+        //10 15 17 20
+        //mid=10 (my=22) -> mid 커져야함
+        while(start<=end){
+            long mid = (start + end)/2;
+            long my_tree = 0;
+            for(int i=0;i<tree.size();i++){
+                long cut = tree.get(i) - mid;
+                if(cut>0){
+                    my_tree += cut;
                 }
             }
-            if(height>=target){
-                res = Math.max(res, mid);
-                //res = mid;
-                low = mid + 1;
+            //System.out.println(mid +" "+ my_tree);
+
+            if(my_tree>=target){
+                if(max<mid){
+                    max = mid;
+                }
+                start = mid + 1;
             }else{
-                high = mid - 1;
+                end = mid -1;
             }
         }
-        return res;
+        return max;
     }
+
 }
